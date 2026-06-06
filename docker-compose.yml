@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:6.2-alpine
+    container_name: novel-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: novel-backend
+    depends_on:
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      QINIU_AI_API_KEY: ${QINIU_AI_API_KEY}
+      QINIU_AI_BASE_URL: ${QINIU_AI_BASE_URL:-https://api.qnaigc.com/v1}
+      QINIU_AI_MODEL: ${QINIU_AI_MODEL:-deepseek-v4-pro}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: novel-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
+volumes:
+  redis-data:

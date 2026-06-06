@@ -1,0 +1,38 @@
+# 剧本 Schema v1.0 模板
+# 用于 AI 转换输出与前端编辑器的契约文件
+
+title: string                                  # 剧本标题
+original_work:
+  title: string                                # 原著小说标题
+  author: string                               # 原著作者
+  chapters: number                             # 转换的章节数
+  version: string                              # 转换版本号
+  created_at: datetime                         # 转换时间（ISO-8601）
+summary: string                                # 剧本整体摘要
+characters:                                    # 人物列表
+  - id: string                                 # 人物唯一标识，例如 char_001
+    name: string                               # 人物姓名
+    alias: list<string>                        # 别名 / 昵称
+    description: string                        # 人物简介
+    importance: enum[main, supporting, minor]  # 重要程度
+scenes:                                        # 场景列表
+  - id: string                                 # 场景唯一标识
+    number: number                             # 场景序号
+    title: string                              # 场景标题
+    location: string                           # 地点
+    time: string                               # 时间（白天 / 夜晚 / 凌晨 / 黄昏 …）
+    setting: string                            # 场景环境描述
+    characters: list<string>                   # 本场出场人物 ID 列表
+    beats:                                     # 场景节拍（情节单元）
+      - id: string                             # 节拍唯一标识
+        type: enum[action, dialogue, narration, transition]
+        character: string?                     # 相关人物 ID（action / dialogue 必填）
+        content: string                        # 节拍内容
+        emotion: string?                       # 人物情绪（可选）
+        action: string?                        # 伴随动作（可选）
+    transitions: string?                       # 转场说明（可选）
+metadata:
+  total_scenes: number
+  total_characters: number
+  estimated_duration: number                   # 预估时长（分钟）
+  tags: list<string>

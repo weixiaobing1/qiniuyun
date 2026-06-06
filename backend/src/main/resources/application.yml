@@ -1,0 +1,64 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: novel-to-script
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  datasource:
+    url: jdbc:h2:mem:novel;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+      timeout: 5s
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+
+  ai:
+    openai:
+      # 七牛云 DeepSeek（OpenAI 兼容协议）
+      base-url: ${QINIU_AI_BASE_URL:https://api.qnaigc.com/v1}
+      api-key: ${QINIU_AI_API_KEY:}
+      chat:
+        options:
+          model: ${QINIU_AI_MODEL:deepseek-v4-pro}
+          temperature: 0.3
+          max-tokens: 4096
+
+# 自定义配置
+novel-to-script:
+  ai:
+    timeout-seconds: 120
+    max-retries: 2
+    cache-ttl-seconds: 86400
+  upload:
+    allowed-extensions: txt,md,html,htm
+    max-chars: 500000
+
+logging:
+  level:
+    root: INFO
+    com.qiniu.noveltoscript: DEBUG
